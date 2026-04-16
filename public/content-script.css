@@ -1,0 +1,4 @@
+.ar-highlight-item {
+  outline: 2px dashed #ff7b00 !important;
+  outline-offset: 2px;
+}

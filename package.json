@@ -1,0 +1,24 @@
+{
+  "name": "attribute-reporter",
+  "version": "2.0.0",
+  "author": "Damiano Fusco",
+  "description": "A Chrome extension that reports the attributes of HTML elements on a webpage.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "build-content-script": "rm public/content-script.js; tsc -p tsconfig.content.json",
+    "build-all": "npm run pretty; npm run build-content-script; npm run build;",
+    "preview": "vite preview",
+    "pretty": "npx prettier -w \"./src/**/*.(ts|vue)\""
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "@vitejs/plugin-vue": "^6.0.6",
+    "prettier": "^3.8.3",
+    "typescript": "^6.0.2",
+    "vite": "^8.0.8",
+    "vue": "^3.5.32",
+    "vue-tsc": "^3.2.6"
+  }
+}

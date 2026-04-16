@@ -1,0 +1,30 @@
+{
+  "files": [
+    "src-content-scripts/content-script.ts"
+  ],
+  "compilerOptions": {
+    "outDir": "public",
+    "rootDir": "src-content-scripts",
+    "strict": true,
+    "sourceMap": false,
+
+    "target": "ES2019",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+
+    "noEmit": false,
+
+    "paths": {
+      "@/*": [
+        "./src-content-scripts/*"
+      ]
+    }
+  },
+  "include": [
+    "src-content-scripts/*"
+  ],
+  "exclude": [
+    "src/*",
+    "node_modules"
+  ]
+}
