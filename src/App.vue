@@ -12,7 +12,7 @@ const lastSortDirection = store.computedGetters.lastSortDirection
 const inspectedElements = store.computedGetters.inspectedElements
 
 const onTargetAttributeNameChanged = async (newAttributeName: string) => {
-  // dispatch action to Vuex store
+  // dispatch action to store
   await store.actions.targetAttributeNameChanged({
     targetAttributeName: newAttributeName,
     elementIndex: inspectedElements.value.length
@@ -20,12 +20,12 @@ const onTargetAttributeNameChanged = async (newAttributeName: string) => {
 }
 
 const onHighlightChildItem = async (index: number) => {
-  // dispatch action to Vuex store
+  // dispatch action to store
   await store.actions.highlightChildItem(index)
 }
 
 const onExpandChildItem = async (index: number) => {
-  // dispatch action to Vuex store
+  // dispatch action to store
   await store.actions.expandChildItem(index)
 }
 
@@ -35,12 +35,12 @@ const onMouseLeave = async () => {
 }
 
 const gotoElement = async (devToolsNodeIndex: number) => {
-  // dispatch action to Vuex store
+  // dispatch action to store
   await store.actions.undo(devToolsNodeIndex)
 }
 
 const onSortHeaderClick = async (what: string) => {
-  // dispatch action to Vuex store
+  // dispatch action to store
   await store.actions.updateSortByAndDirection(what)
 }
 

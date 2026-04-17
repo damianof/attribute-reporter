@@ -154,7 +154,7 @@ const actions = {
   },
 
   resetItems: async () => {
-    // chrome.devtools: clear all highlights then clear Vuex inspectedElements
+    // chrome.devtools: clear all highlights then reset items in store
     chromeDevToolsHelper.clearAllHighlights().then(
       () => {
         mutations.resetItems()
@@ -202,22 +202,22 @@ const actions = {
 
 const computedGetters = {
   targetAttributeName: computed((): string => {
-    // return value from Vuex store
+    // return value from store
     return state.targetAttributeName
   }),
 
   lastSortBy: computed((): string => {
-    // return value from Vuex store
+    // return value from store
     return state.lastSortBy
   }),
 
   lastSortDirection: computed((): number => {
-    // return value from Vuex store
+    // return value from store
     return state.lastSortDirection
   }),
 
   inspectedElements: computed((): IElementInfo[] => {
-    // return value from Vuex store
+    // return value from store
     return state.inspectedElements
   })
 }
@@ -240,7 +240,7 @@ chromeDevToolsHelper.init({
     return state.targetAttributeName
   },
   onShown: () => {
-    // on panel shown, update the panel data through Vuex store
+    // on panel shown, update the panel data through store
     actions.targetAttributeNameChanged({
       targetAttributeName: state.targetAttributeName,
       elementIndex: state.inspectedElements.length

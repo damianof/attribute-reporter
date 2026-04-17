@@ -63,7 +63,7 @@ const sortedReportItems = computed((): IAttributeInfo[] => {
     return reportItems.value
   }
 
-  // copy array to avoid mutating original (we want to preserve the original sorting state in Vuex reportItems)
+  // copy array to avoid mutating original (we want to preserve the original sorting state in reportItems)
   const items = reportItems.value.concat()
   const sortBy = props.currentSortBy
   return items.sort((itemA: any, itemB: any) => {
