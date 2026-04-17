@@ -104,6 +104,10 @@ body {
   min-height: 0;
 }
 
+.app-container .attribute-reporter .gap-2 {
+  gap: 0.25rem;
+}
+
 .app-container .app-wrapper {
   display: flex;
   flex-direction: column;
@@ -159,11 +163,13 @@ body {
 
 .app-container .attribute-reporter .attribute-selection .attribute-input {
   display: flex;
+  gap: 0.25rem;
+  align-items: center;
 }
 
-.app-container .attribute-reporter .attribute-selection .attribute-input *:not(:first-child) {
+/* .app-container .attribute-reporter .attribute-selection .attribute-input *:not(:first-child) {
   margin-left: 0.25rem;
-}
+} */
 
 .app-container .attribute-reporter .attribute-selection .attribute-input.invalid input {
   outline: 0;
@@ -176,8 +182,7 @@ body {
 .app-container .attribute-reporter .attribute-selection .attribute-input .attribute-badges {
   display: flex;
   align-items: center;
-  gap: 4px;
-  margin-left: 0.25rem;
+  gap: 0.25rem;
 }
 
 .app-container .attribute-reporter .attribute-selection .attribute-input .attribute-badge {
@@ -189,7 +194,6 @@ body {
   background: #f0f0f0;
   color: #555;
   white-space: nowrap;
-  margin-left: 0.5rem;
   font-weight: bold;
   min-height: 0.5rem;
 }
@@ -210,9 +214,57 @@ body {
   .attribute-reporter
   .attribute-selection
   .attribute-input
+  .attribute-badge.missing-toggle {
+  border: solid 1px #c2410c;
+}
+
+.app-container
+  .attribute-reporter
+  .attribute-selection
+  .attribute-input
   .attribute-badge.missing-toggle.active {
   background: #f97316;
   border-color: #c2410c;
+  color: #fff;
+}
+
+/* element-type filter row */
+.app-container .attribute-reporter .attribute-selection.element-type-filter .attribute-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* .app-container .attribute-reporter .attribute-selection.element-type-filter .attribute-badges *:not(:first-child) {
+  margin-left: 0.25rem;
+} */
+
+.app-container .attribute-reporter .attribute-selection.element-type-filter .attribute-badge {
+  cursor: pointer;
+  border: 1px solid #aaa;
+  font-size: 10px;
+  padding: 0.5rem;
+  border-radius: 0.15rem;
+  background: #f0f0f0;
+  color: #555;
+  white-space: nowrap;
+  font-weight: bold;
+  min-height: 0.5rem;
+}
+
+.app-container .attribute-reporter .attribute-selection.element-type-filter .attribute-badge:hover {
+  background: #ddd;
+  border-color: #888;
+  color: #222;
+}
+
+.app-container
+  .attribute-reporter
+  .attribute-selection.element-type-filter
+  .attribute-badge.active {
+  background: #7c3aed;
+  border-color: #5b21b6;
   color: #fff;
 }
 
@@ -224,7 +276,6 @@ body {
   color: #006898;
   border: solid 2px #006898;
   white-space: nowrap;
-  margin-left: 0.5rem;
   font-weight: bold;
   min-height: 0.5rem;
   cursor: pointer;

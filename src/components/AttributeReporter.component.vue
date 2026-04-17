@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { IAttributeInfo, IElementInfo, ElementInfoHelper } from '../models/'
 import SortButton2 from './elements/SortButton2.vue'
 import Domlist from './dom-list/DomList.component.vue'
@@ -110,13 +110,45 @@ const onAttributeBadgeClick = (value: string) => {
   emits('targetAttributeNameChanged', value)
 }
 
-const filteredReportItems = computed((): IAttributeInfo[] => {
+const missingFilteredItems = computed((): IAttributeInfo[] => {
   if (props.returnAllElements) {
     // missing mode: show only elements that lack the attribute
     return sortedReportItems.value.filter((item) => item.attributeNotSet)
   }
   // default: show only elements that have the attribute
   return sortedReportItems.value.filter((item) => !item.attributeNotSet)
+})
+
+// p2: distinct sorted element types from the current (missing-filtered) result set
+const elementTypes = computed((): string[] => {
+  const names = new Set(missingFilteredItems.value.map((item) => item.name))
+  return Array.from(names).sort()
+})
+
+// p2: active element type filter — empty means "show all"
+const selectedElementTypes = ref<string[]>([])
+
+const toggleElementType = (type: string) => {
+  const idx = selectedElementTypes.value.indexOf(type)
+  if (idx === -1) {
+    selectedElementTypes.value = [...selectedElementTypes.value, type]
+  } else {
+    selectedElementTypes.value = selectedElementTypes.value.filter((t) => t !== type)
+  }
+}
+
+// reset element filter when attribute name changes
+watch(
+  () => props.targetAttributeName,
+  () => {
+    selectedElementTypes.value = []
+  }
+)
+
+const filteredReportItems = computed((): IAttributeInfo[] => {
+  const base = missingFilteredItems.value
+  if (selectedElementTypes.value.length === 0) return base
+  return base.filter((item) => selectedElementTypes.value.includes(item.name))
 })
 
 const onSortClick = (what: string) => {
@@ -239,6 +271,23 @@ const onCopyAll = () => {
           </span>
         </div>
         <div></div>
+      </div>
+
+      <!-- element-type filter row: only shown when 2+ distinct types exist -->
+      <div v-if="elementTypes.length >= 2" class="attribute-selection element-type-filter">
+        <div>Filter:</div>
+        <div class="attribute-badges">
+          <button
+            v-for="type in elementTypes"
+            :key="type"
+            type="button"
+            class="attribute-badge element-type-badge"
+            :class="{ active: selectedElementTypes.includes(type) }"
+            @click="toggleElementType(type)"
+          >
+            {{ type.toLowerCase() }}
+          </button>
+        </div>
       </div>
     </div>
 
