@@ -19,8 +19,8 @@ const props = withDefaults(defineProps<Props>(), {
   inspectedElements: () => []
 })
 
-// version in format [major].[minor] (i.e. 1.5)
-const version = `v${packagejson.version.split('.').slice(0, 2).join('.')}`
+// version from package.json, to display in the UI and use in tests (e.g. to check if extension is up to date)
+const version = `v${packagejson.version}`
 
 const emits = defineEmits<{
   (e: 'gotoElement', n: number): any

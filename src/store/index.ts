@@ -1,5 +1,5 @@
 import { reactive, computed } from 'vue'
-import { IElementInfo, IAttributeInfo } from '../models'
+import { IElementInfo } from '../models'
 import { chromeDevToolsHelper, logger } from './ChromeDevToolsHelper'
 
 // to use only when developing
@@ -22,7 +22,7 @@ let testElements: IElementInfo[] = [
         attributeName: 'id',
         attributeValue: 'blah',
         attributeNotSet: false
-      } as IAttributeInfo,
+      },
       {
         index: 1,
         name: 'div',
@@ -30,33 +30,44 @@ let testElements: IElementInfo[] = [
         attributeName: 'id',
         attributeValue: 'asdasdasd',
         attributeNotSet: false
-      } as IAttributeInfo
-    ]
-  },
-  {
-    localName: 'span',
-    className: 'this is another inspected element  ',
-    id: '',
-    name: 'default',
-    value: 'default',
-    attributeName: '',
-    attributeValue: '',
-    attributeNotSet: true,
-    flashMessage: '',
-    reportItems: [
+      },
       {
-        index: 0,
+        index: 2,
+        name: 'p',
+        flashMessage: '',
+        attributeName: 'id',
+        attributeValue: 'dfdf',
+        attributeNotSet: false
+      },
+      {
+        index: 3,
         name: 'img',
         flashMessage: '',
-        attributeName: 'data-role',
-        attributeValue: 'blah',
+        attributeName: 'id',
+        attributeValue: 'poasdasdasd',
         attributeNotSet: false
-      } as IAttributeInfo
+      },
+      {
+        index: 4,
+        name: 'section',
+        flashMessage: '',
+        attributeName: 'id',
+        attributeValue: 'kjg-df-sdf',
+        attributeNotSet: false
+      },
+      {
+        index: 5,
+        name: 'p',
+        flashMessage: '',
+        attributeName: 'id',
+        attributeValue: 'sdf-gg-fff',
+        attributeNotSet: false
+      }
     ]
-  }
+  },
 ]
 
-const debug = false
+const debug = true
 let initialInspectedElements: IElementInfo[] = []
 if (debug) {
   initialInspectedElements = testElements // during development only, for CSS tweaks etc, use testElements

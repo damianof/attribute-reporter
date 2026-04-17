@@ -56,7 +56,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div id="app" @mouseleave="onMouseLeave">
+  <div class="app-wrapper" @mouseleave="onMouseLeave">
     <AttributeReporter
       :targetAttributeName="targetAttributeName"
       :inspectedElements="inspectedElements"
@@ -72,11 +72,36 @@ onMounted(async () => {
 </template>
 
 <style lang="css">
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
 .app-container {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-container .attribute-reporter {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.app-container .app-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 .app-container .attribute-reporter .head {
@@ -267,6 +292,10 @@ onMounted(async () => {
 .app-container .attribute-reporter .report-list {
   outline: solid 0 gray;
   background: #fff;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 .app-container .attribute-reporter .report-list > .list-header > .sort {
@@ -274,9 +303,14 @@ onMounted(async () => {
 }
 
 .app-container .attribute-reporter .report-list > .list-content {
-  max-height: 300px;
   overflow-x: hidden;
   overflow-y: auto;
+}
+
+.app-container .attribute-reporter .report-list > .list-content:not(.root-element) {
+  flex: 1;
+  min-height: 0;
+  scrollbar-gutter: stable;
 }
 
 .app-container .attribute-reporter .report-list > .list-content .list-item {
@@ -336,7 +370,14 @@ onMounted(async () => {
   display: none;
 }
 
+.app-container .attribute-reporter .report-list > .list-header .header-attribute-action {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .app-container .attribute-reporter .report-list > .list-content .list-item .attribute-action {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -362,8 +403,12 @@ onMounted(async () => {
   color: #eee;
 }
 
-.app-container .attribute-reporter .report-list > .list-header,
-.app-container .attribute-reporter .report-list > .list-content {
+.app-container .attribute-reporter .report-list > .list-header {
+  padding: 5px 10px 5px 5px;
+}
+
+.app-container .attribute-reporter .report-list > .list-content,
+.app-container .attribute-reporter .report-list > .list-content .list-item {
   padding: 5px;
 }
 
@@ -372,7 +417,6 @@ onMounted(async () => {
   display: grid;
   grid-gap: 3px;
   align-items: center;
-  padding: 5px;
   margin-bottom: 7px;
 }
 
