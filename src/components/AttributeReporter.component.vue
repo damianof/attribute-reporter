@@ -10,13 +10,15 @@ type Props = {
   currentSortDirection?: number
   targetAttributeName?: string
   inspectedElements?: IElementInfo[]
+  returnAllElements?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   currentSortBy: 'name',
   currentSortDirection: 0,
   targetAttributeName: 'data-testid',
-  inspectedElements: () => []
+  inspectedElements: () => [],
+  returnAllElements: false
 })
 
 // version from package.json, to display in the UI and use in tests (e.g. to check if extension is up to date)
@@ -28,6 +30,7 @@ const emits = defineEmits<{
   (e: 'sortHeaderClick', what: string): any
   (e: 'highlightChildItem', index: number): any
   (e: 'expandChildItem', index: number): any
+  (e: 'toggleMissingMode', returnAllElements: boolean): any
 }>()
 
 const gotoElement = (n: number) => {
@@ -101,11 +104,20 @@ const onTargetAttributeNameKeyUp = (keyboardEvent: any) => {
   debounceTimeoutId = setTimeout(debouncedEmit, 500)
 }
 
-const attributeBadges = ['class', 'id', 'data-testid']
+const attributeBadges = ['class', 'id', 'aria-label', 'data-testid']
 
 const onAttributeBadgeClick = (value: string) => {
   emits('targetAttributeNameChanged', value)
 }
+
+const filteredReportItems = computed((): IAttributeInfo[] => {
+  if (props.returnAllElements) {
+    // missing mode: show only elements that lack the attribute
+    return sortedReportItems.value.filter((item) => item.attributeNotSet)
+  }
+  // default: show only elements that have the attribute
+  return sortedReportItems.value.filter((item) => !item.attributeNotSet)
+})
 
 const onSortClick = (what: string) => {
   emits('sortHeaderClick', what)
@@ -122,7 +134,7 @@ const onExpandChildItem = (index: number) => {
 const copyAllFlash = ref(false)
 
 const onCopyAll = () => {
-  const data = sortedReportItems.value.map((item) => {
+  const data = filteredReportItems.value.map((item) => {
     const cssSelector = item.attributeValue
       ? `${item.name}[${item.attributeName}="${item.attributeValue}"]`
       : `${item.name}[${item.attributeName}]`
@@ -171,19 +183,28 @@ const onCopyAll = () => {
             >
               {{ badge }}
             </button>
+            <button
+              type="button"
+              class="attribute-badge missing-toggle"
+              :class="{ active: returnAllElements }"
+              title="Show only elements missing this attribute"
+              @click="emits('toggleMissingMode', !returnAllElements)"
+            >
+              ∅ missing
+            </button>
           </div>
           <span
-            v-if="reportItems.length > 0"
+            v-if="filteredReportItems.length > 0"
             class="item-count-badge"
             :class="{ flashed: copyAllFlash }"
             title="Copy all results as JSON"
             @click="onCopyAll"
-            >{{ copyAllFlash ? '✓' : reportItems.length }}</span
+            >{{ copyAllFlash ? '✓' : filteredReportItems.length }}</span
           >
         </span>
 
         <SortButton2
-          v-show="sortedReportItems.length > 0"
+          v-show="filteredReportItems.length > 0"
           label="Clear sort"
           :sortDirection="0"
           :showDefaultIcon="false"
@@ -224,7 +245,7 @@ const onCopyAll = () => {
     <Domlist
       v-show="inspectedElements.length > 0"
       :inspectedElement="inspectedElement"
-      :items="sortedReportItems"
+      :items="filteredReportItems"
       :currentSortBy="currentSortBy"
       :currentSortDirection="currentSortDirection"
       :targetAttributeName="targetAttributeName"

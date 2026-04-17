@@ -94,9 +94,9 @@ function saveSelectedElement(
       result.attributeNotSet = (result.attributeValue || '').trim().length === 0
     }
 
-    // now do child items
+    // now do child items — collect ALL descendants so the UI can filter freely
     let count = -1
-    var items: any = el.querySelectorAll(`[${targetAttributeName}]`)
+    var items: any = el.querySelectorAll('*')
     //logger.log('items.length', (items || []).length)
 
     childItems = []
@@ -120,7 +120,7 @@ function saveSelectedElement(
         flashMessage: '',
         attributeName: targetAttributeName,
         attributeValue: attributeValue,
-        attributeNotSet: (attributeValue || '').trim().length === 0
+        attributeNotSet: attr === null
       } as IAttributeInfo)
 
       childItems.push(item)

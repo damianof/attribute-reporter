@@ -64,10 +64,10 @@ let testElements: IElementInfo[] = [
         attributeNotSet: false
       }
     ]
-  },
+  }
 ]
 
-const debug = true
+const debug = false
 let initialInspectedElements: IElementInfo[] = []
 if (debug) {
   initialInspectedElements = testElements // during development only, for CSS tweaks etc, use testElements
@@ -79,12 +79,14 @@ const state = reactive({
   lastSortBy: 'name',
   lastHighlightedIndex: -1,
   lastExpandedIndex: -1,
+  returnAllElements: false,
   inspectedElements: initialInspectedElements
 })
 
 const mutations = {
   targetAttributeNameChanged: (newName: string) => {
     state.targetAttributeName = (newName || '').trim()
+    state.returnAllElements = false
 
     if (state.targetAttributeName.length === 0) {
       state.inspectedElements = []
@@ -123,7 +125,6 @@ const actions = {
     const { targetAttributeName, elementIndex } = args
     mutations.targetAttributeNameChanged(targetAttributeName)
 
-    // chrome.devtools: update observed attribute name, then updated inspectedElements
     chromeDevToolsHelper.onSelectionChanged(elementIndex, targetAttributeName).then(
       (parsed: any) => {
         mutations.updateReportItems(parsed)
@@ -131,6 +132,10 @@ const actions = {
       },
       () => {}
     )
+  },
+
+  toggleMissingMode: (returnAllElements: boolean) => {
+    state.returnAllElements = returnAllElements
   },
 
   updateReportItems: (elementInfo: IElementInfo) => {
@@ -178,7 +183,7 @@ const actions = {
 
   expandChildItem: async (index: number) => {
     // chrome.devtools: expandChildItem
-    chromeDevToolsHelper.expandChildItem(index, state.targetAttributeName).then(
+    chromeDevToolsHelper.expandChildItem(index).then(
       () => {
         // remember last expanded index
         mutations.expandChildItem(index)
@@ -217,8 +222,11 @@ const computedGetters = {
   }),
 
   inspectedElements: computed((): IElementInfo[] => {
-    // return value from store
     return state.inspectedElements
+  }),
+
+  returnAllElements: computed((): boolean => {
+    return state.returnAllElements
   })
 }
 

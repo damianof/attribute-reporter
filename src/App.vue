@@ -10,6 +10,7 @@ const targetAttributeName = store.computedGetters.targetAttributeName
 const lastSortBy = store.computedGetters.lastSortBy
 const lastSortDirection = store.computedGetters.lastSortDirection
 const inspectedElements = store.computedGetters.inspectedElements
+const returnAllElements = store.computedGetters.returnAllElements
 
 const onTargetAttributeNameChanged = async (newAttributeName: string) => {
   // dispatch action to store
@@ -44,6 +45,10 @@ const onSortHeaderClick = async (what: string) => {
   await store.actions.updateSortByAndDirection(what)
 }
 
+const onToggleMissingMode = async (returnAllElements: boolean) => {
+  await store.actions.toggleMissingMode(returnAllElements)
+}
+
 onMounted(async () => {
   // when the entire chrome dev tools is closed, cleanup
   window.onbeforeunload = () => {
@@ -62,11 +67,13 @@ onMounted(async () => {
       :inspectedElements="inspectedElements"
       :currentSortBy="lastSortBy"
       :currentSortDirection="lastSortDirection"
+      :returnAllElements="returnAllElements"
       @gotoElement="gotoElement"
       @targetAttributeNameChanged="onTargetAttributeNameChanged"
       @highlightChildItem="onHighlightChildItem"
       @expandChildItem="onExpandChildItem"
       @sortHeaderClick="onSortHeaderClick"
+      @toggleMissingMode="onToggleMissingMode"
     />
   </div>
 </template>
@@ -196,6 +203,16 @@ body {
 .app-container .attribute-reporter .attribute-selection .attribute-input .attribute-badge.active {
   background: #0ea5e9;
   border-color: #006898;
+  color: #fff;
+}
+
+.app-container
+  .attribute-reporter
+  .attribute-selection
+  .attribute-input
+  .attribute-badge.missing-toggle.active {
+  background: #f97316;
+  border-color: #c2410c;
   color: #fff;
 }
 
