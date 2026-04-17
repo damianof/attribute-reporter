@@ -151,6 +151,17 @@ const filteredReportItems = computed((): IAttributeInfo[] => {
   return base.filter((item) => selectedElementTypes.value.includes(item.name))
 })
 
+// p3: values that appear more than once in the filtered list (non-empty only)
+const duplicateValues = computed((): Set<string> => {
+  const counts = new Map<string, number>()
+  for (const item of filteredReportItems.value) {
+    if (item.attributeValue) {
+      counts.set(item.attributeValue, (counts.get(item.attributeValue) ?? 0) + 1)
+    }
+  }
+  return new Set([...counts.entries()].filter(([, n]) => n > 1).map(([v]) => v))
+})
+
 const onSortClick = (what: string) => {
   emits('sortHeaderClick', what)
 }
@@ -164,6 +175,7 @@ const onExpandChildItem = (index: number) => {
 }
 
 const copyAllFlash = ref(false)
+const copyCsvFlash = ref(false)
 
 const onCopyAll = () => {
   const data = filteredReportItems.value.map((item) => {
@@ -182,6 +194,23 @@ const onCopyAll = () => {
   copyAllFlash.value = true
   setTimeout(() => {
     copyAllFlash.value = false
+  }, 1500)
+}
+
+const onCopyCsv = () => {
+  const header = 'element,attributeName,attributeValue,cssSelector'
+  const rows = filteredReportItems.value.map((item) => {
+    const cssSelector = item.attributeValue
+      ? `${item.name}[${item.attributeName}="${item.attributeValue}"]`
+      : `${item.name}[${item.attributeName}]`
+    // quote fields that may contain commas or quotes
+    const escape = (v: string) => `"${v.replace(/"/g, '""')}"`
+    return [item.name, item.attributeName, item.attributeValue, cssSelector].map(escape).join(',')
+  })
+  navigator.clipboard.writeText([header, ...rows].join('\n'))
+  copyCsvFlash.value = true
+  setTimeout(() => {
+    copyCsvFlash.value = false
   }, 1500)
 }
 </script>
@@ -232,6 +261,14 @@ const onCopyAll = () => {
             title="Copy all results as JSON"
             @click="onCopyAll"
             >{{ copyAllFlash ? '✓' : filteredReportItems.length }}</span
+          >
+          <span
+            v-if="filteredReportItems.length > 0"
+            class="item-count-badge csv-badge"
+            :class="{ flashed: copyCsvFlash }"
+            title="Copy all results as CSV"
+            @click="onCopyCsv"
+            >{{ copyCsvFlash ? '✓' : 'CSV' }}</span
           >
         </span>
 
@@ -295,6 +332,7 @@ const onCopyAll = () => {
       v-show="inspectedElements.length > 0"
       :inspectedElement="inspectedElement"
       :items="filteredReportItems"
+      :duplicateValues="duplicateValues"
       :currentSortBy="currentSortBy"
       :currentSortDirection="currentSortDirection"
       :targetAttributeName="targetAttributeName"

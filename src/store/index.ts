@@ -73,8 +73,10 @@ if (debug) {
   initialInspectedElements = testElements // during development only, for CSS tweaks etc, use testElements
 }
 
+const STORAGE_KEY = 'attribute-reporter:targetAttributeName'
+
 const state = reactive({
-  targetAttributeName: 'class',
+  targetAttributeName: localStorage.getItem(STORAGE_KEY) || 'data-testid',
   lastSortDirection: 0,
   lastSortBy: 'name',
   lastHighlightedIndex: -1,
@@ -87,6 +89,7 @@ const mutations = {
   targetAttributeNameChanged: (newName: string) => {
     state.targetAttributeName = (newName || '').trim()
     state.returnAllElements = false
+    localStorage.setItem(STORAGE_KEY, state.targetAttributeName)
 
     if (state.targetAttributeName.length === 0) {
       state.inspectedElements = []

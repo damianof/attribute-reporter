@@ -295,6 +295,24 @@ body {
   color: #fff;
 }
 
+.app-container
+  .attribute-reporter
+  .attribute-selection
+  .attribute-input
+  .item-count-badge.csv-badge {
+  color: #166534;
+  border-color: #16a34a;
+  margin-left: 0.25rem;
+}
+
+.app-container
+  .attribute-reporter
+  .attribute-selection
+  .attribute-input
+  .item-count-badge.csv-badge:hover {
+  background: #dcfce7 !important;
+}
+
 .app-container .attribute-reporter .report-list .empty-state {
   padding: 8px 5px;
   color: #888;
@@ -398,6 +416,32 @@ body {
   outline: solid 1px rgba(255, 0, 0, 0.5);
 }
 
+.app-container .attribute-reporter .report-list > .list-content .list-item.emptyValue {
+  outline: solid 1px rgba(249, 115, 22, 0.6);
+}
+
+.app-container
+  .attribute-reporter
+  .report-list
+  > .list-content
+  .list-item.emptyValue
+  span.attribute-value {
+  color: #c2410c;
+}
+
+.app-container .attribute-reporter .report-list > .list-content .list-item.duplicateValue {
+  outline: solid 1px rgba(234, 179, 8, 0.8);
+}
+
+.app-container
+  .attribute-reporter
+  .report-list
+  > .list-content
+  .list-item.duplicateValue
+  span.attribute-value {
+  color: #854d0e;
+}
+
 .app-container
   .attribute-reporter
   .report-list
@@ -457,6 +501,31 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.app-container
+  .attribute-reporter
+  .report-list
+  > .list-content
+  .list-item
+  .attribute-value
+  .state-indicator {
+  font-size: 9px;
+  flex-shrink: 0;
+}
+
+.app-container
+  .attribute-reporter
+  .report-list
+  > .list-content
+  .list-item
+  .attribute-value
+  .attribute-value-text.placeholder {
+  font-style: italic;
+  opacity: 0.6;
 }
 
 .app-container

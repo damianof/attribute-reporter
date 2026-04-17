@@ -10,6 +10,7 @@ type Props = {
   targetAttributeName?: string
   inspectedElement?: IElementInfo
   items?: IAttributeInfo[]
+  duplicateValues?: Set<string>
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -19,7 +20,8 @@ const props = withDefaults(defineProps<Props>(), {
   inspectedElement: () => {
     return {} as any
   },
-  items: () => []
+  items: () => [],
+  duplicateValues: () => new Set()
 })
 
 const emits = defineEmits<{
@@ -96,6 +98,7 @@ const onExpandChildItem = (index: number) => {
         v-for="(item, index) in items"
         :key="index"
         :item="item"
+        :isDuplicate="duplicateValues.has(item.attributeValue) && !!item.attributeValue"
         @highlightChildItem="onHighlightChildItem"
         @expandChildItem="onExpandChildItem"
       ></DomListItemComponent>
