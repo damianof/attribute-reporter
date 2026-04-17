@@ -10,9 +10,10 @@ const targetAttributeName = store.computedGetters.targetAttributeName
 const lastSortBy = store.computedGetters.lastSortBy
 const lastSortDirection = store.computedGetters.lastSortDirection
 const inspectedElements = store.computedGetters.inspectedElements
+const returnAllElements = store.computedGetters.returnAllElements
 
 const onTargetAttributeNameChanged = async (newAttributeName: string) => {
-  // dispatch action to Vuex store
+  // dispatch action to store
   await store.actions.targetAttributeNameChanged({
     targetAttributeName: newAttributeName,
     elementIndex: inspectedElements.value.length
@@ -20,12 +21,12 @@ const onTargetAttributeNameChanged = async (newAttributeName: string) => {
 }
 
 const onHighlightChildItem = async (index: number) => {
-  // dispatch action to Vuex store
+  // dispatch action to store
   await store.actions.highlightChildItem(index)
 }
 
 const onExpandChildItem = async (index: number) => {
-  // dispatch action to Vuex store
+  // dispatch action to store
   await store.actions.expandChildItem(index)
 }
 
@@ -35,13 +36,17 @@ const onMouseLeave = async () => {
 }
 
 const gotoElement = async (devToolsNodeIndex: number) => {
-  // dispatch action to Vuex store
+  // dispatch action to store
   await store.actions.undo(devToolsNodeIndex)
 }
 
 const onSortHeaderClick = async (what: string) => {
-  // dispatch action to Vuex store
+  // dispatch action to store
   await store.actions.updateSortByAndDirection(what)
+}
+
+const onToggleMissingMode = async (returnAllElements: boolean) => {
+  await store.actions.toggleMissingMode(returnAllElements)
 }
 
 onMounted(async () => {
@@ -56,27 +61,58 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div id="app" @mouseleave="onMouseLeave">
+  <div class="app-wrapper" @mouseleave="onMouseLeave">
     <AttributeReporter
       :targetAttributeName="targetAttributeName"
       :inspectedElements="inspectedElements"
       :currentSortBy="lastSortBy"
       :currentSortDirection="lastSortDirection"
+      :returnAllElements="returnAllElements"
       @gotoElement="gotoElement"
       @targetAttributeNameChanged="onTargetAttributeNameChanged"
       @highlightChildItem="onHighlightChildItem"
       @expandChildItem="onExpandChildItem"
       @sortHeaderClick="onSortHeaderClick"
+      @toggleMissingMode="onToggleMissingMode"
     />
   </div>
 </template>
 
 <style lang="css">
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
 .app-container {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-container .attribute-reporter {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.app-container .attribute-reporter .gap-2 {
+  gap: 0.25rem;
+}
+
+.app-container .app-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 .app-container .attribute-reporter .head {
@@ -127,11 +163,13 @@ onMounted(async () => {
 
 .app-container .attribute-reporter .attribute-selection .attribute-input {
   display: flex;
+  gap: 0.25rem;
+  align-items: center;
 }
 
-.app-container .attribute-reporter .attribute-selection .attribute-input *:not(:first-child) {
+/* .app-container .attribute-reporter .attribute-selection .attribute-input *:not(:first-child) {
   margin-left: 0.25rem;
-}
+} */
 
 .app-container .attribute-reporter .attribute-selection .attribute-input.invalid input {
   outline: 0;
@@ -144,8 +182,7 @@ onMounted(async () => {
 .app-container .attribute-reporter .attribute-selection .attribute-input .attribute-badges {
   display: flex;
   align-items: center;
-  gap: 4px;
-  margin-left: 0.25rem;
+  gap: 0.25rem;
 }
 
 .app-container .attribute-reporter .attribute-selection .attribute-input .attribute-badge {
@@ -157,7 +194,6 @@ onMounted(async () => {
   background: #f0f0f0;
   color: #555;
   white-space: nowrap;
-  margin-left: 0.5rem;
   font-weight: bold;
   min-height: 0.5rem;
 }
@@ -174,6 +210,64 @@ onMounted(async () => {
   color: #fff;
 }
 
+.app-container
+  .attribute-reporter
+  .attribute-selection
+  .attribute-input
+  .attribute-badge.missing-toggle {
+  border: solid 1px #c2410c;
+}
+
+.app-container
+  .attribute-reporter
+  .attribute-selection
+  .attribute-input
+  .attribute-badge.missing-toggle.active {
+  background: #f97316;
+  border-color: #c2410c;
+  color: #fff;
+}
+
+/* element-type filter row */
+.app-container .attribute-reporter .attribute-selection.element-type-filter .attribute-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* .app-container .attribute-reporter .attribute-selection.element-type-filter .attribute-badges *:not(:first-child) {
+  margin-left: 0.25rem;
+} */
+
+.app-container .attribute-reporter .attribute-selection.element-type-filter .attribute-badge {
+  cursor: pointer;
+  border: 1px solid #aaa;
+  font-size: 10px;
+  padding: 0.5rem;
+  border-radius: 0.15rem;
+  background: #f0f0f0;
+  color: #555;
+  white-space: nowrap;
+  font-weight: bold;
+  min-height: 0.5rem;
+}
+
+.app-container .attribute-reporter .attribute-selection.element-type-filter .attribute-badge:hover {
+  background: #ddd;
+  border-color: #888;
+  color: #222;
+}
+
+.app-container
+  .attribute-reporter
+  .attribute-selection.element-type-filter
+  .attribute-badge.active {
+  background: #7c3aed;
+  border-color: #5b21b6;
+  color: #fff;
+}
+
 .app-container .attribute-reporter .attribute-selection .attribute-input .item-count-badge {
   font-size: 10px;
   padding: 0.5rem;
@@ -182,7 +276,6 @@ onMounted(async () => {
   color: #006898;
   border: solid 2px #006898;
   white-space: nowrap;
-  margin-left: 0.5rem;
   font-weight: bold;
   min-height: 0.5rem;
   cursor: pointer;
@@ -200,6 +293,24 @@ onMounted(async () => {
   background: #42b983 !important;
   border-color: #42b983;
   color: #fff;
+}
+
+.app-container
+  .attribute-reporter
+  .attribute-selection
+  .attribute-input
+  .item-count-badge.csv-badge {
+  color: #166534;
+  border-color: #16a34a;
+  margin-left: 0.25rem;
+}
+
+.app-container
+  .attribute-reporter
+  .attribute-selection
+  .attribute-input
+  .item-count-badge.csv-badge:hover {
+  background: #dcfce7 !important;
 }
 
 .app-container .attribute-reporter .report-list .empty-state {
@@ -267,6 +378,10 @@ onMounted(async () => {
 .app-container .attribute-reporter .report-list {
   outline: solid 0 gray;
   background: #fff;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 .app-container .attribute-reporter .report-list > .list-header > .sort {
@@ -274,9 +389,14 @@ onMounted(async () => {
 }
 
 .app-container .attribute-reporter .report-list > .list-content {
-  max-height: 300px;
   overflow-x: hidden;
   overflow-y: auto;
+}
+
+.app-container .attribute-reporter .report-list > .list-content:not(.root-element) {
+  flex: 1;
+  min-height: 0;
+  scrollbar-gutter: stable;
 }
 
 .app-container .attribute-reporter .report-list > .list-content .list-item {
@@ -294,6 +414,32 @@ onMounted(async () => {
 
 .app-container .attribute-reporter .report-list > .list-content .list-item.attributeNotSet {
   outline: solid 1px rgba(255, 0, 0, 0.5);
+}
+
+.app-container .attribute-reporter .report-list > .list-content .list-item.emptyValue {
+  outline: solid 1px rgba(249, 115, 22, 0.6);
+}
+
+.app-container
+  .attribute-reporter
+  .report-list
+  > .list-content
+  .list-item.emptyValue
+  span.attribute-value {
+  color: #c2410c;
+}
+
+.app-container .attribute-reporter .report-list > .list-content .list-item.duplicateValue {
+  outline: solid 1px rgba(234, 179, 8, 0.8);
+}
+
+.app-container
+  .attribute-reporter
+  .report-list
+  > .list-content
+  .list-item.duplicateValue
+  span.attribute-value {
+  color: #854d0e;
 }
 
 .app-container
@@ -336,7 +482,14 @@ onMounted(async () => {
   display: none;
 }
 
+.app-container .attribute-reporter .report-list > .list-header .header-attribute-action {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .app-container .attribute-reporter .report-list > .list-content .list-item .attribute-action {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -348,6 +501,31 @@ onMounted(async () => {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.app-container
+  .attribute-reporter
+  .report-list
+  > .list-content
+  .list-item
+  .attribute-value
+  .state-indicator {
+  font-size: 9px;
+  flex-shrink: 0;
+}
+
+.app-container
+  .attribute-reporter
+  .report-list
+  > .list-content
+  .list-item
+  .attribute-value
+  .attribute-value-text.placeholder {
+  font-style: italic;
+  opacity: 0.6;
 }
 
 .app-container
@@ -362,8 +540,12 @@ onMounted(async () => {
   color: #eee;
 }
 
-.app-container .attribute-reporter .report-list > .list-header,
-.app-container .attribute-reporter .report-list > .list-content {
+.app-container .attribute-reporter .report-list > .list-header {
+  padding: 5px 10px 5px 5px;
+}
+
+.app-container .attribute-reporter .report-list > .list-content,
+.app-container .attribute-reporter .report-list > .list-content .list-item {
   padding: 5px;
 }
 
@@ -372,7 +554,6 @@ onMounted(async () => {
   display: grid;
   grid-gap: 3px;
   align-items: center;
-  padding: 5px;
   margin-bottom: 7px;
 }
 

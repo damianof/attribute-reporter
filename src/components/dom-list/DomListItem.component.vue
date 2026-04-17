@@ -4,6 +4,7 @@ import { IAttributeInfo } from '../../models/'
 
 type Props = {
   item: IAttributeInfo
+  isDuplicate?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -16,7 +17,8 @@ const props = withDefaults(defineProps<Props>(), {
       attributeNotSet: false,
       flashMessage: ''
     }
-  }
+  },
+  isDuplicate: false
 })
 
 const emits = defineEmits<{
@@ -25,8 +27,34 @@ const emits = defineEmits<{
 }>()
 
 const cssClass = computed((): string => {
-  const { attributeNotSet, flashMessage } = props.item
-  return `${attributeNotSet ? 'attributeNotSet' : ''} ${flashMessage ? 'copied-to-clipboard' : ''}`
+  const { attributeNotSet, attributeValue, flashMessage } = props.item
+  const isEmptyValue = !attributeNotSet && attributeValue === ''
+  return [
+    attributeNotSet ? 'attributeNotSet' : '',
+    isEmptyValue ? 'emptyValue' : '',
+    props.isDuplicate ? 'duplicateValue' : '',
+    flashMessage ? 'copied-to-clipboard' : ''
+  ]
+    .filter(Boolean)
+    .join(' ')
+})
+
+const stateIndicator = computed((): { emoji: string; title: string } => {
+  const { attributeNotSet, attributeValue } = props.item
+  if (attributeNotSet)
+    return { emoji: '🔴', title: 'Missing: attribute not present on this element' }
+  if (attributeValue === '')
+    return { emoji: '🟠', title: 'Empty: attribute is set but has no value' }
+  if (props.isDuplicate)
+    return { emoji: '🟡', title: 'Duplicate: this value is shared by multiple elements' }
+  return { emoji: '🟢', title: 'OK: attribute is set with a unique value' }
+})
+
+const displayValue = computed((): { text: string; placeholder: boolean } => {
+  const { attributeNotSet, attributeValue } = props.item
+  if (attributeNotSet) return { text: '[missing]', placeholder: true }
+  if (attributeValue === '') return { text: '[empty]', placeholder: true }
+  return { text: attributeValue, placeholder: false }
 })
 
 const tooltipText = computed((): string => {
@@ -99,7 +127,10 @@ const onItemClick = (_event: Event, item: IAttributeInfo, action: string) => {
     <span class="attribute-name">{{ item.name }}</span>
     <span class="attribute-name">{{ item.attributeName }}</span>
     <span class="attribute-value">
-      <span class="attribute-value-text">{{ item.attributeValue }}</span>
+      <span class="state-indicator" :title="stateIndicator.title">{{ stateIndicator.emoji }}</span>
+      <span class="attribute-value-text" :class="{ placeholder: displayValue.placeholder }">{{
+        displayValue.text
+      }}</span>
       <span v-if="item.flashMessage">{{ item.flashMessage }}</span>
     </span>
     <!-- <span class="attribute-action">

@@ -2,7 +2,7 @@ export interface IChromeDevToolsHelper {
   onSelectionChanged(elementIndex: number, targetAttributeName: string): Promise<any>
   highlightChildItem(index: number): Promise<boolean>
   clearAllHighlights(): Promise<boolean>
-  expandChildItem(index: number, attributeName: string): Promise<boolean>
+  expandChildItem(index: number): Promise<boolean>
   undo(devToolsNodeIndex: number): Promise<boolean>
 }
 
@@ -158,17 +158,12 @@ export class ChromeDevToolsHelper implements IChromeDevToolsHelper {
     })
   }
 
-  expandChildItem(index: number, attributeName: string): Promise<boolean> {
+  expandChildItem(index: number): Promise<boolean> {
     return new Promise<boolean>((resolve: any, reject: any) => {
       if (privateChrome && privateChrome.devtools) {
-        // $0 is the currently selected element in the Elements panel.
-        // querySelectorAll order matches the childItems order built in saveSelectedElement.
-        // inspect() is a DevTools console API — available here without useContentScriptContext.
-        // Append "; void 0" so the eval result is undefined (a primitive),
-        // preventing "Object reference chain is too long" from the protocol
-        // trying to serialize the DOM element back to the extension.
+        // item.index corresponds to position in querySelectorAll('*') order
         privateChrome.devtools.inspectedWindow.eval(
-          `inspect($0.querySelectorAll('[${attributeName}]')[${index}]); void 0`,
+          `inspect($0.querySelectorAll('*')[${index}]); void 0`,
           (_result: any, isException: any) => {
             if (isException) {
               console.error(

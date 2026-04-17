@@ -1,5 +1,5 @@
 import { reactive, computed } from 'vue'
-import { IElementInfo, IAttributeInfo } from '../models'
+import { IElementInfo } from '../models'
 import { chromeDevToolsHelper, logger } from './ChromeDevToolsHelper'
 
 // to use only when developing
@@ -22,7 +22,7 @@ let testElements: IElementInfo[] = [
         attributeName: 'id',
         attributeValue: 'blah',
         attributeNotSet: false
-      } as IAttributeInfo,
+      },
       {
         index: 1,
         name: 'div',
@@ -30,28 +30,39 @@ let testElements: IElementInfo[] = [
         attributeName: 'id',
         attributeValue: 'asdasdasd',
         attributeNotSet: false
-      } as IAttributeInfo
-    ]
-  },
-  {
-    localName: 'span',
-    className: 'this is another inspected element  ',
-    id: '',
-    name: 'default',
-    value: 'default',
-    attributeName: '',
-    attributeValue: '',
-    attributeNotSet: true,
-    flashMessage: '',
-    reportItems: [
+      },
       {
-        index: 0,
+        index: 2,
+        name: 'p',
+        flashMessage: '',
+        attributeName: 'id',
+        attributeValue: 'dfdf',
+        attributeNotSet: false
+      },
+      {
+        index: 3,
         name: 'img',
         flashMessage: '',
-        attributeName: 'data-role',
-        attributeValue: 'blah',
+        attributeName: 'id',
+        attributeValue: 'poasdasdasd',
         attributeNotSet: false
-      } as IAttributeInfo
+      },
+      {
+        index: 4,
+        name: 'section',
+        flashMessage: '',
+        attributeName: 'id',
+        attributeValue: 'kjg-df-sdf',
+        attributeNotSet: false
+      },
+      {
+        index: 5,
+        name: 'p',
+        flashMessage: '',
+        attributeName: 'id',
+        attributeValue: 'sdf-gg-fff',
+        attributeNotSet: false
+      }
     ]
   }
 ]
@@ -62,18 +73,23 @@ if (debug) {
   initialInspectedElements = testElements // during development only, for CSS tweaks etc, use testElements
 }
 
+const STORAGE_KEY = 'attribute-reporter:targetAttributeName'
+
 const state = reactive({
-  targetAttributeName: 'class',
+  targetAttributeName: localStorage.getItem(STORAGE_KEY) || 'data-testid',
   lastSortDirection: 0,
   lastSortBy: 'name',
   lastHighlightedIndex: -1,
   lastExpandedIndex: -1,
+  returnAllElements: false,
   inspectedElements: initialInspectedElements
 })
 
 const mutations = {
   targetAttributeNameChanged: (newName: string) => {
     state.targetAttributeName = (newName || '').trim()
+    state.returnAllElements = false
+    localStorage.setItem(STORAGE_KEY, state.targetAttributeName)
 
     if (state.targetAttributeName.length === 0) {
       state.inspectedElements = []
@@ -112,7 +128,6 @@ const actions = {
     const { targetAttributeName, elementIndex } = args
     mutations.targetAttributeNameChanged(targetAttributeName)
 
-    // chrome.devtools: update observed attribute name, then updated inspectedElements
     chromeDevToolsHelper.onSelectionChanged(elementIndex, targetAttributeName).then(
       (parsed: any) => {
         mutations.updateReportItems(parsed)
@@ -120,6 +135,10 @@ const actions = {
       },
       () => {}
     )
+  },
+
+  toggleMissingMode: (returnAllElements: boolean) => {
+    state.returnAllElements = returnAllElements
   },
 
   updateReportItems: (elementInfo: IElementInfo) => {
@@ -143,7 +162,7 @@ const actions = {
   },
 
   resetItems: async () => {
-    // chrome.devtools: clear all highlights then clear Vuex inspectedElements
+    // chrome.devtools: clear all highlights then reset items in store
     chromeDevToolsHelper.clearAllHighlights().then(
       () => {
         mutations.resetItems()
@@ -167,7 +186,7 @@ const actions = {
 
   expandChildItem: async (index: number) => {
     // chrome.devtools: expandChildItem
-    chromeDevToolsHelper.expandChildItem(index, state.targetAttributeName).then(
+    chromeDevToolsHelper.expandChildItem(index).then(
       () => {
         // remember last expanded index
         mutations.expandChildItem(index)
@@ -191,23 +210,26 @@ const actions = {
 
 const computedGetters = {
   targetAttributeName: computed((): string => {
-    // return value from Vuex store
+    // return value from store
     return state.targetAttributeName
   }),
 
   lastSortBy: computed((): string => {
-    // return value from Vuex store
+    // return value from store
     return state.lastSortBy
   }),
 
   lastSortDirection: computed((): number => {
-    // return value from Vuex store
+    // return value from store
     return state.lastSortDirection
   }),
 
   inspectedElements: computed((): IElementInfo[] => {
-    // return value from Vuex store
     return state.inspectedElements
+  }),
+
+  returnAllElements: computed((): boolean => {
+    return state.returnAllElements
   })
 }
 
@@ -229,7 +251,7 @@ chromeDevToolsHelper.init({
     return state.targetAttributeName
   },
   onShown: () => {
-    // on panel shown, update the panel data through Vuex store
+    // on panel shown, update the panel data through store
     actions.targetAttributeNameChanged({
       targetAttributeName: state.targetAttributeName,
       elementIndex: state.inspectedElements.length
