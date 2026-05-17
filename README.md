@@ -4,6 +4,12 @@ A Chrome DevTools extension that inspects child elements by attribute name and g
 
 Select any element in the **Elements** panel, switch to the **Attribute Reporter** tab, and see a live list of all matching children — sortable, searchable, and copyable.
 
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/agoffnfbofbgggpdoikchockhdekmkck?label=chrome%20web%20store)](https://chromewebstore.google.com/detail/attribute-reporter/agoffnfbofbgggpdoikchockhdekmkck)
+[![Chrome Web Store Users](https://img.shields.io/chrome-web-store/users/agoffnfbofbgggpdoikchockhdekmkck)](https://chromewebstore.google.com/detail/attribute-reporter/agoffnfbofbgggpdoikchockhdekmkck)
+[![Built with Vue 3](https://img.shields.io/badge/built%20with-Vue%203-42b883?logo=vue.js&logoColor=white)](https://vuejs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+
 ---
 
 ## Features
