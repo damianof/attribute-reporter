@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { IAttributeInfo, IElementInfo, ElementInfoHelper } from '../models/'
+import Logo from './Logo.vue'
 import SortButton2 from './elements/SortButton2.vue'
 import Domlist from './dom-list/DomList.component.vue'
 import packagejson from '../../package.json'
@@ -219,7 +220,7 @@ const onCopyCsv = () => {
   <div class="attribute-reporter">
     <div class="head">
       <div class="header-and-logo">
-        <img src="/icon-32.png" width="24" height="24" title="Logo" />
+        <Logo style="width: 30px; height: 30px" />
         <h1>
           Attribute Reporter
           <span>({{ version }})</span>
