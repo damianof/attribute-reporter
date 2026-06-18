@@ -78,8 +78,8 @@ const onExpandChildItem = (index: number) => {
         <!--Filter-->
       </span>
       <span><!--Expand--></span>
-      <span class="header-attribute-action">CSS</span>
-      <span class="header-attribute-action">Value</span>
+      <span class="header-attribute-action">Plain</span>
+      <span class="header-attribute-action">Selector</span>
       <span class="header-attribute-action">XPath</span>
     </div>
 

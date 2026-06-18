@@ -122,10 +122,7 @@ body {
 .app-container .attribute-reporter .head .header-and-logo {
   display: flex;
   align-items: center;
-}
-
-.app-container .attribute-reporter .head .header-and-logo img {
-  margin-right: 5px;
+  gap: 0.25rem;
 }
 
 .app-container .attribute-reporter .head .header-and-logo h1 {
