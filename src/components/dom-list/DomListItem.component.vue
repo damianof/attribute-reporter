@@ -99,13 +99,13 @@ const onItemClick = (_event: Event, item: IAttributeInfo, action: string) => {
   const { name, attributeName, attributeValue } = props.item
   if (action === 'copy-value') {
     copyToClipboard(attributeValue)
-    item.flashMessage = ' (value copied to clipboard)'
+    item.flashMessage = '(value copied to clipboard)'
   } else if (action === 'copy-css-selector') {
     copyToClipboard(cssSelector.value)
-    item.flashMessage = ' (CSS selector copied)'
+    item.flashMessage = '(CSS selector copied)'
   } else if (action === 'copy-xpath') {
     copyToClipboard(`$x('//${name}[@${attributeName}="${attributeValue}"]')[0]`)
-    item.flashMessage = ' (xpath expression copied to clipboard)'
+    item.flashMessage = '(xpath expression copied to clipboard)'
   } else if (action === 'expand-item') {
     emits('expandChildItem', item.index)
   }
@@ -128,10 +128,13 @@ const onItemClick = (_event: Event, item: IAttributeInfo, action: string) => {
     <span class="attribute-name">{{ item.attributeName }}</span>
     <span class="attribute-value">
       <span class="state-indicator" :title="stateIndicator.title">{{ stateIndicator.emoji }}</span>
-      <span class="attribute-value-text" :class="{ placeholder: displayValue.placeholder }">{{
-        displayValue.text
-      }}</span>
       <span v-if="item.flashMessage">{{ item.flashMessage }}</span>
+      <span
+        v-else
+        class="attribute-value-text"
+        :class="{ placeholder: displayValue.placeholder }"
+        >{{ displayValue.text }}</span
+      >
     </span>
     <!-- <span class="attribute-action">
       <i
