@@ -136,15 +136,6 @@ const onItemClick = (_event: Event, item: IAttributeInfo, action: string) => {
         >{{ displayValue.text }}</span
       >
     </span>
-    <!-- <span class="attribute-action">
-      <i
-        class="material-icons expand"
-        title="Expand"
-        @click="onItemClick($event, item, 'expand-item')"
-        >expand</i
-      >
-    </span> -->
-    <span></span>
     <span class="attribute-action">
       <i
         class="material-icons clipboard"

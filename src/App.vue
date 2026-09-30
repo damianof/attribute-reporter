@@ -560,10 +560,10 @@ body {
 }
 
 .app-container .attribute-reporter .report-list > .list-header {
-  grid-template-columns: 60px 100px 70px auto 100px 100px 100px 100px;
+  grid-template-columns: 60px 100px auto 50px 50px 50px;
 }
 
 .app-container .attribute-reporter .report-list > .list-content .list-item {
-  grid-template-columns: 60px 100px auto 100px 100px 100px 100px;
+  grid-template-columns: 60px 100px auto 50px 50px 50px;
 }
 </style>

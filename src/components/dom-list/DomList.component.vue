@@ -74,10 +74,6 @@ const onExpandChildItem = (index: number) => {
         :showDefaultIcon="true"
         @click="onSortClick('attributeValue')"
       />
-      <span>
-        <!--Filter-->
-      </span>
-      <span><!--Expand--></span>
       <span class="header-attribute-action">Plain</span>
       <span class="header-attribute-action">Selector</span>
       <span class="header-attribute-action">XPath</span>
